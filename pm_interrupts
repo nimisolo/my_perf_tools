@@ -1,0 +1,9 @@
+interrupts_turns=0
+interrupts_data_prefix="proc_interrupt_"
+
+get_interrupts ()
+{
+	cat /proc/interrupts > $data_dir""$interrupts_data_prefix""$interrupts_turns
+	interrupts_turns=`expr $interrupts_turns + 1`
+}
+
