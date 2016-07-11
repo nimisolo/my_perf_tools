@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ###############################################################################
 #
@@ -78,6 +78,7 @@ mkdir $data_dir
 while [ $count -eq 0 ] || [ $count -gt 1 ]
 do
 	do_fetching
+	sleep $interval
 	if [ $count -gt 0 ]; then
 		count=`expr $count - 1 `
 	fi

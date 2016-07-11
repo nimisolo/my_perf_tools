@@ -1,9 +1,46 @@
 interrupts_turns=0
-interrupts_data_prefix="proc_interrupt_"
+interrupts_data_prefix=$data_dir"proc_interrupt_"
+interrupts_dir=$data_dir"interrupts/"
 
 get_interrupts ()
 {
-	cat /proc/interrupts > $data_dir""$interrupts_data_prefix""$interrupts_turns
+	cat /proc/interrupts > $interrupts_data_prefix""$interrupts_turns
 	interrupts_turns=`expr $interrupts_turns + 1`
+}
+
+handle_interrupts ()
+{
+	local file=""
+	local ln=0
+	local dest=""
+
+	# clear result directory
+	rm -rf $interrupts_dir
+	mkdir $interrupts_dir
+ 
+	# for each file
+	while true
+	do
+		file=$interrupts_data_prefix""$interrupts_turns
+		if [ ! -f $file ]; then
+			break
+		fi
+
+		ln=0
+		
+		# for each line
+		while read line
+		do
+			# skip first line:  cpu0 cpu1 cpu2 ...
+			if [ $ln -gt 0 ]; then
+				dest=`echo $line | awk -F':' '{print $1}'`
+				echo $line | awk -F':' '{print $2}' >> "$interrupts_dir$dest"
+			fi
+				
+			ln=`expr $ln + 1`
+		done < $file
+		
+		interrupts_turns=`expr $interrupts_turns + 1`
+	done
 }
 
